@@ -10,52 +10,67 @@
     	<div class="col-6 offset-3">
     		<!-- Khai báo một đối tượng có giá trị là bean được gửi từ controller qua  -->
     		<!-- Bean này sẽ chứa các giá trị input đã nhập trước đó và lỗi nếu có -->
-    		<form method="post" action="/register">
+    		<form th:object="${bean}" method="post" action="/admin/product-form"
+    			enctype="multipart/form-data">
     			<div class="mb-3">
 				  <label class="form-label">Tên sản phẩm</label>
-				  <input type="text" class="form-control" name="name">
+				  <input th:field="*{name}" type="text" class="form-control" name="name">
+				  <small class="text-danger" th:errors="*{name}"></small>
 				</div>
 				<div class="mb-3">
 				  <label class="form-label">Mô tả</label>
-				  <textarea name="desc" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+				  <textarea th:field="*{desc}" name="desc" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+				  <small class="text-danger" th:errors="*{desc}"></small>
 				</div>
 				<div class="mb-3">
 				  <label class="form-label">Giá</label>
-				  <input type="text" class="form-control" name="price">
+				  <input th:field="*{price}" type="text" class="form-control" name="price">
+				  <small class="text-danger" th:errors="*{price}"></small>
 				</div>
 				<div class="mb-3">
 				  <label class="form-label">Số lượng</label>
-				  <input type="text" class="form-control" name="quantity">
+				  <input th:field="*{quantity}" type="text" class="form-control" name="quantity">
+				  <small class="text-danger" th:errors="*{quantity}"></small>
 				</div>
 				
 				<div class="mb-3">
 				  <label class="form-label">Danh mục</label>
-				  <select class="form-select" aria-label="Default select example">
-					  <option selected>Open this select menu</option>
-					  <option value="1">One</option>
-					  <option value="2">Two</option>
-					  <option value="3">Three</option>
+				  <select th:field="*{category}" name="category" class="form-select" aria-label="Default select example">
+					  <option selected value="0">----Chọn danh mục-------</option>
+					  <!-- Do ở controller gửi qua là mảng -->
+					  <!-- Sẽ sử dụng th:each của thymeleaf để duyệt mảng -->
+					  <!-- Do mặc định phải giữ lại 1 option là yêu cầu chọn -->
+					  <!-- Sẽ phải sử dụng thêm 1 tag block của thyeleaf là th:block -->
+					  <!-- Để chứa nội dung option -->
+					  <!-- <th:block></th:block> <=> <div></div> -->
+					  <!-- Nhưng khi giao diện render thì thẻ th:block sẽ không render vào html -->
+					  <th:block th:each="item : ${categories}">
+					  	<option th:value="${item.id}" th:text="${item.name}"></option>
+					  </th:block>
 					</select>
+					<small class="text-danger" th:errors="*{category}"></small>
 				</div>
 				<div class="mb-3">
 				  <label class="form-label">Ảnh</label>
 				  <input name="images" multiple accept="image/*" class="form-control" type="file" id="formFile">
+				  <small class="text-danger" th:text="${bean.imageError}"></small>
 				</div>
 				
 				<div class="mb-3">
 				  <label class="form-label">Trạng thái</label>
 				  <div class="form-check">
-					  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+					  <input th:field="*{status}" name="status" value="2" class="form-check-input" type="radio" id="flexRadioDefault1">
 					  <label class="form-check-label" for="flexRadioDefault1">
 					    Đang bán
 					  </label>
 					</div>
 					<div class="form-check">
-					  <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+					  <input th:field="*{status}" name="status" value="1" class="form-check-input" type="radio" id="flexRadioDefault2">
 					  <label class="form-check-label" for="flexRadioDefault2">
 					    Ngừng bán
 					  </label>
 					</div>
+					<small class="text-danger" th:errors="*{status}"></small>
 				</div>
 				<input value="Thêm sản phẩm" class="btn btn-primary" type="submit">
     		</form>
