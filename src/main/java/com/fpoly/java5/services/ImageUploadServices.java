@@ -30,12 +30,17 @@ public class ImageUploadServices {
 			// Tạo thư mục nếu chưa tồn tại
 			Files.createDirectories(Paths.get(UPLOAD_DIR));
 
+			// Lấy phần mở rộng của file png, jpg, webp
 			String originalName = file.getOriginalFilename();
 			String extension = originalName.substring(originalName.lastIndexOf("."));
 
+			// Tạo tên file: Thời gian hiên tại đổi qua ms + phần mở rộng 
 			String fileName = String.format("%d%s", new Date().getTime(), extension);
+			// Tạo file ảnh rỗng trong thư mục chỉ định 
 			Path targetPath = Paths.get(UPLOAD_DIR, fileName);
 
+			// Thực hiện copy nội dung ở file upload vào file vừa tạo
+			// StandardCopyOption.REPLACE_EXISTING => Nếu trùng tên sẽ thực hiện ghi đè
 			Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
 			return fileName;

@@ -3,20 +3,26 @@ package com.fpoly.java5.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fpoly.java5.beans.ProductFormBean;
 import com.fpoly.java5.entities.CategoryEntity;
+import com.fpoly.java5.services.ImageUploadServices;
 
 import jakarta.validation.Valid;
 
 @Controller
 public class AdminProductController {
+	
+	@Autowired 
+	private ImageUploadServices imageUploadServices;
 
 	@GetMapping("/admin/product-form")
 	public String productFormUI(Model model) {
@@ -36,7 +42,16 @@ public class AdminProductController {
 //		!errors.hasErrors() => Dữ liệu ở form không lỗi
 //		Mọi thứ bên trong src muốn ở website thấy => Được thực thi
 		if(!errors.hasErrors() && bean.getImageError().equals("")) {
-			
+//			Lưu ảnh
+//			Xử lý liên quan đến db
+			for(MultipartFile file : bean.getImages()) {
+				try {
+					String imageName = imageUploadServices.save(file);
+					System.out.println(imageName == null ? "Loi" : imageName);
+				}catch(Exception e) {
+					System.out.println("Loi exception");
+				}
+			}
 		}
 		
 		return "product-form.html";
