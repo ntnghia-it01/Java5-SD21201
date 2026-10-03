@@ -1,5 +1,6 @@
 package com.fpoly.java5.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -8,11 +9,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.fpoly.java5.beans.RegisterBean;
+import com.fpoly.java5.services.AuthService;
 
 import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
+	
+	@Autowired
+	private AuthService authService;
 
 	@GetMapping("/register")
 	public String registerUI(Model model) {
@@ -31,6 +36,13 @@ public class AuthController {
 		if(!errors.hasErrors()) {
 //			Không có lỗi
 //			Xử lý sau khi form không có lỗi 
+//			Kiểm tra username và email có tồn tại không?
+//			Nếu không tồn tại => Thực hiện insert vào DB 
+			try {
+				authService.register(bean);
+			}catch (Exception e) {
+				model.addAttribute("errorRegister", e.getMessage());
+			}
 		}
 		
 		return "register.html";
