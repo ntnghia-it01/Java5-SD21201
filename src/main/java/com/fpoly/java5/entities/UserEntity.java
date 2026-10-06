@@ -26,7 +26,7 @@ public class UserEntity {
 	@Column(name = "full_name", columnDefinition = "NVARCHAR (100)", nullable = false)
 	private String name;
 	
-	@Column(name = "email", length = 150, nullable = false)
+	@Column(name = "email", length = 255, nullable = false)
 	private String email;
 	
 	@Column(name = "password_hash", length = 255, nullable = false)
@@ -40,6 +40,8 @@ public class UserEntity {
 	
 	@Column(name = "role", nullable = true)
 	private int role = 1;
+//	Role == 1 => User
+//	Role == 2 => Admin
 	
 	@Column(name = "is_active", nullable = true)
 	private boolean active = true;

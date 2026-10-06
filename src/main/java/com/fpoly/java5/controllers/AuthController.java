@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.fpoly.java5.beans.LoginBean;
 import com.fpoly.java5.beans.RegisterBean;
 import com.fpoly.java5.services.AuthService;
 
@@ -47,4 +48,47 @@ public class AuthController {
 		
 		return "register.html";
 	}
+	
+	@GetMapping("/login")
+	public String loginUI(Model model) {
+		model.addAttribute("bean", new LoginBean());
+		
+		return "login.html";
+	}
+	
+	@PostMapping("/login")
+	public String handleLogin(Model model,
+			@ModelAttribute(name = "bean") @Valid LoginBean bean,
+			Errors errors) {
+		
+		if(!errors.hasErrors()) {
+			try {
+				authService.login(bean);
+//				chuyển trang 
+				return "redirect:/";
+			} catch (Exception e) {
+				model.addAttribute("errorLogin", e.getMessage());
+			}
+		}
+		
+		return "login.html";
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
