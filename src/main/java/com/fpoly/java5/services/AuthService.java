@@ -10,11 +10,17 @@ import com.fpoly.java5.beans.RegisterBean;
 import com.fpoly.java5.entities.UserEntity;
 import com.fpoly.java5.jpas.UserJPA;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 @Service
 public class AuthService {
 	
 	@Autowired
 	UserJPA userJPA;
+	
+	@Autowired
+	HttpServletResponse response;
 	
 	public void register(RegisterBean bean) {
 //		Kiểm tra email có tồn tại không?
@@ -62,5 +68,26 @@ public class AuthService {
 		if(!bean.getPassword().equals(userEntity.getPassword())) {
 			throw new RuntimeException("Email hoặc mật khẩu không đúng!");
 		}
+		
+//		Sau khi đăng nhập thành công
+//		Lưu user id và role vào cookie
+//		Dùng để kiểm tra quyền truy cập vào các trang của website
+//		HttpServletResponse
+//		Chuyển int => String 
+		int maxAgeCookie = 60 * 60 * 24 * 7 ;// 7d
+		Cookie userIdCookie = new Cookie("USER_ID", String.valueOf(userEntity.getId()));
+		userIdCookie.setPath("/");
+		// Không có dòng này path sẽ set cho url hiện tại (/login)
+		// Khi đó chỉ có trang /login mới dùng được cookie này
+		// Thời hạn của cookie => 7d 
+		userIdCookie.setMaxAge(maxAgeCookie);
+		
+		Cookie roleCookie = new Cookie("ROLE", String.valueOf(userEntity.getRole()));
+		roleCookie.setPath("/");
+		roleCookie.setMaxAge(maxAgeCookie);
+		
+//		Thêm cookie vào browser
+		response.addCookie(userIdCookie);
+		response.addCookie(roleCookie);
 	}
 }
