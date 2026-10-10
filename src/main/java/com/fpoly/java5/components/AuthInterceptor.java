@@ -33,6 +33,9 @@ public class AuthInterceptor implements HandlerInterceptor{
 			int userId = Integer.parseInt(Utils.getCookieByName("USER_ID", request));
 			int role = Integer.parseInt(Utils.getCookieByName("ROLE", request));
 			
+//			/product
+//			/admin/product-form
+//			/login
 			String path = request.getServletPath();
 			
 			if(path.startsWith("/admin/") && role != 2) {

@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fpoly.java5.beans.ProductFormBean;
 import com.fpoly.java5.entities.CategoryEntity;
+import com.fpoly.java5.jpas.CategoryJPA;
 import com.fpoly.java5.services.ImageUploadServices;
+import com.fpoly.java5.services.ProductServices;
 
 import jakarta.validation.Valid;
 
@@ -23,6 +25,12 @@ public class AdminProductController {
 	
 	@Autowired 
 	private ImageUploadServices imageUploadServices;
+	
+	@Autowired
+	private CategoryJPA categoryJPA;
+	
+	@Autowired
+	private ProductServices productServices;
 
 	@GetMapping("/admin/product-form")
 	public String productFormUI(Model model) {
@@ -36,21 +44,11 @@ public class AdminProductController {
 	public String handleProductForm(Model model,
 			@ModelAttribute(name = "bean") @Valid ProductFormBean bean,
 			Errors errors) {
-		
-//		Kiểm tra lỗi ở form có tồn tại không?
-//		bean.getImageError().equals("") => Ảnh không lỗi
-//		!errors.hasErrors() => Dữ liệu ở form không lỗi
-//		Mọi thứ bên trong src muốn ở website thấy => Được thực thi
 		if(!errors.hasErrors() && bean.getImageError().equals("")) {
-//			Lưu ảnh
-//			Xử lý liên quan đến db
-			for(MultipartFile file : bean.getImages()) {
-				try {
-					String imageName = imageUploadServices.save(file);
-					System.out.println(imageName == null ? "Loi" : imageName);
-				}catch(Exception e) {
-					System.out.println("Loi exception");
-				}
+			try {
+				productServices.addProduct(bean);
+			} catch (Exception e) {
+				model.addAttribute("productError", e.getMessage());
 			}
 		}
 		
@@ -61,13 +59,8 @@ public class AdminProductController {
 //	Thì các hàm có gán @ModelAttribute sẽ được chạy để gửi dữ liệu qua html
 	@ModelAttribute("categories")
 	public List<CategoryEntity> getCategoryEntities(){
-		List<CategoryEntity> categoryEntities = new ArrayList<CategoryEntity>();
-		categoryEntities.add(new CategoryEntity(1, "Danh muc 1"));
-		categoryEntities.add(new CategoryEntity(2, "Danh muc 2"));
-		categoryEntities.add(new CategoryEntity(3, "Danh muc 3"));
-		categoryEntities.add(new CategoryEntity(4, "Danh muc 4"));
-		categoryEntities.add(new CategoryEntity(5, "Danh muc 5"));
-		
+		List<CategoryEntity> categoryEntities = categoryJPA.findAll();
+
 		return categoryEntities;
 	}
 }

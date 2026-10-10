@@ -28,41 +28,23 @@ public class ProductFormBean {
 	@Min(value = 1, message = "Danh mục bắt buộc chọn")
 	private int category; // id danh mục trong db
 //	Chưa có anotation hỗ trợ
-	private List<MultipartFile> images;
+	private MultipartFile image;
 	@Range(min = 1, max = 2, message = "Trạng thái bắt buộc chọn")
 	private int status;
 	
-	public String getImageError() {
-//		Viết if else để kiểm tra
-//		- Mỗi sản phẩm lưu được tối đa 5 ảnh
-//		- Chỉ cần 1 File tải lên không phải ảnh => Lỗi 
-//		- Chỉ cần 1 File tải lên quá 5MB => Lỗi
-//		Nếu có lỗi return về chuỗi nội dung lỗi
-//		Không có lỗi return về null
-		
-		if(images == null) {
-			return "";
-		}
-		
-		if(images.size() == 0) {
+	public String getImageError() {		
+		if(image == null) {
 			return "Ảnh sản phẩm là bắt buộc";
 		}
 		
-		if(images.size() > 5) {
-			return "Mỗi sản phẩm lưu được tối đa 5 ảnh";
+		double maxSize = 1024 * 1024 * 5; // => 5MB 
+		
+		if(!image.getContentType().startsWith("image/")) {
+			return "File tải lên phải là ảnh";
 		}
 		
-		double maxSize = 1024 * 1024 * 5; // => 5MB 
-		for(MultipartFile file : images) {
-//			file.getContentType()
-//			image/png, image/jpg, image/webp,.... 
-			if(!file.getContentType().startsWith("image/")) {
-				return "File tải lên phải là ảnh";
-			}
-			
-			if(file.getSize() > maxSize) {
-				return "Kích thước tải lên tối đa 5MB mỗi ảnh";
-			}
+		if(image.getSize() > maxSize) {
+			return "Kích thước tải lên tối đa 5MB mỗi ảnh";
 		}
 		
 		
