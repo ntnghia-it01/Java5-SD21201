@@ -30,7 +30,7 @@ public class ProductEntity {
 	private String desc;
 	
 	@Column(name = "price", nullable = false)
-	private double price;
+	private int price;
 	
 	@Column(name = "quantity", nullable = false)
 	private int quantity = 0;

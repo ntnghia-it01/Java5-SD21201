@@ -10,11 +10,14 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fpoly.java5.beans.ProductFormBean;
 import com.fpoly.java5.entities.CategoryEntity;
+import com.fpoly.java5.entities.ProductEntity;
 import com.fpoly.java5.jpas.CategoryJPA;
+import com.fpoly.java5.jpas.ProductJPA;
 import com.fpoly.java5.services.ImageUploadServices;
 import com.fpoly.java5.services.ProductServices;
 
@@ -31,6 +34,9 @@ public class AdminProductController {
 	
 	@Autowired
 	private ProductServices productServices;
+	
+	@Autowired
+	private ProductJPA productJPA;
 
 	@GetMapping("/admin/product-form")
 	public String productFormUI(Model model) {
@@ -53,6 +59,20 @@ public class AdminProductController {
 		}
 		
 		return "product-form.html";
+	}
+	
+	@GetMapping("/admin/products")
+	public String productListUI(Model model) {
+		List<ProductEntity> productEntities = productJPA.findAll();
+		model.addAttribute("products", productEntities);
+		return "products.html";
+	}
+	
+	@PostMapping("/admin/product-delete")
+	public String handleProductDetele(@RequestParam(name = "id") int id) {
+		productJPA.deleteById(id);
+//		Chuyển về trang /admin/products
+		return "redirect:/admin/products";
 	}
 	
 //	Khi Controller hiện tại được kích hoạt

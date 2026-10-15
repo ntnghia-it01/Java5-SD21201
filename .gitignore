@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker / secrets / runtime data ###
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+images-upload/
+backups/
+*.bak

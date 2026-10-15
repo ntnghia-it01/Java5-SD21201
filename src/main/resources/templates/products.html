@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+  <body>
+    <div class="container">
+    	<a class="btn btn-primary mt-3 mb-3" href="/admin/product-form">Thêm sản phẩm</a>
+    	
+    	<table class="table">
+		  <thead>
+		    <tr>
+		      <th scope="col">ID</th>
+		      <th scope="col">Tên</th>
+		      <th scope="col">Danh mục</th>
+		      <th scope="col">Giá</th>
+		      <th scope="col">Số lượng</th>
+		      <th scope="col">Ảnh</th>
+		      <th scope="col">Trạng thái</th>
+		      <th scope="col">Hành động</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  	<th:block th:each="prod : ${products}">
+			  	<tr th:object="${prod}">
+			      <th scope="row" th:text="*{id}"></th>
+			      <td th:text="*{name}"></td>
+			      <td th:text="*{categoryEntity.name}"></td>
+			      <td th:text="*{price}"></td>
+			      <td th:text="*{quantity}"></td>
+			      <td>
+			      	<img th:src="@{|/images-upload/*{imageUrl}|}" style="width:100px; height: 100px"/>
+			      </td>
+			      <td th:text="*{active == true ? 'Đang bán' : 'Ngưng bán'}"></td>
+			      <td>
+			      	<a class="btn btn-warning">Sửa</a>
+			      	<br/>
+			      	<form method="POST" action="/admin/product-delete">
+			      		<input type="hidden" th:value="${prod.id}" name="id"/>
+			      		<!-- th:field="*{id}" -->
+			      		<!-- - Đặt tên input trùng với tên trong field -->
+			      		<!-- - Gán giá trị vào input -->
+			      		<input type="submit" class="btn btn-danger" value="Xoá"/>
+			      	</form>
+			      </td>
+			    </tr>
+		  	</th:block>
+		  </tbody>
+		</table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
