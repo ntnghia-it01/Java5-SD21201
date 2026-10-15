@@ -1,8 +1,0 @@
-# Chỉ gửi mã nguồn cần build vào Docker, tránh đưa secrets vào build context.
-**
-!pom.xml
-!mvnw
-!.mvn/
-!.mvn/**
-!src/
-!src/**
