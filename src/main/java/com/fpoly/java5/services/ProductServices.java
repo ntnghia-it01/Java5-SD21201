@@ -23,7 +23,7 @@ public class ProductServices {
 	@Autowired
 	private ProductJPA productJPA;
 	
-	public void addProduct(ProductFormBean bean) {
+	public void saveProduct(ProductFormBean bean) {
 //		Lưu ảnh vào project => lấy url 
 		String imageUrl = imageUploadServices.save(bean.getImage());
 		if(imageUrl == null) {
@@ -31,6 +31,11 @@ public class ProductServices {
 		}
 //		Chuyển dữ liệu từ bean qua entity 
 		ProductEntity productEntity = new ProductEntity();
+		
+		if(bean.getId().isPresent()) {
+			productEntity.setId(bean.getId().get());
+		}
+		
 		productEntity.setName(bean.getName());
 		productEntity.setDesc(bean.getDesc());
 		productEntity.setPrice(bean.getPrice());

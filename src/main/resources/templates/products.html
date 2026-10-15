@@ -35,7 +35,7 @@
 			      </td>
 			      <td th:text="*{active == true ? 'Đang bán' : 'Ngưng bán'}"></td>
 			      <td>
-			      	<a class="btn btn-warning">Sửa</a>
+			      	<a class="btn btn-warning" th:href="@{|/admin/product-form?id=${prod.id}|}">Sửa</a>
 			      	<br/>
 			      	<form method="POST" action="/admin/product-delete">
 			      		<input type="hidden" th:value="${prod.id}" name="id"/>

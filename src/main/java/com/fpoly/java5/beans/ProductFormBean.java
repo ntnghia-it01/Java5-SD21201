@@ -1,6 +1,7 @@
 package com.fpoly.java5.beans;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
@@ -16,6 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ProductFormBean {
+	
+	private Optional<Integer> id;
+	
 	@NotBlank(message = "Tên sản phẩm không được bỏ trống")
 	private String name;
 	@NotBlank(message = "Mô tả không được bỏ trống")

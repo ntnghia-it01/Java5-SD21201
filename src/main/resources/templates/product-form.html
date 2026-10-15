@@ -10,7 +10,8 @@
     	<div class="col-6 offset-3">
     		<!-- Khai báo một đối tượng có giá trị là bean được gửi từ controller qua  -->
     		<!-- Bean này sẽ chứa các giá trị input đã nhập trước đó và lỗi nếu có -->
-    		<form th:object="${bean}" method="post" action="/admin/product-form"
+    		<form th:object="${bean}" method="post" 
+    			th:action="@{|/admin/product-form${bean.id != null && bean.id.isPresent() ? '?id=' + bean.id.get() : ''}|}"
     			enctype="multipart/form-data">
     			<div class="mb-3">
 				  <label class="form-label">Tên sản phẩm</label>
@@ -72,7 +73,7 @@
 					</div>
 					<small class="text-danger" th:errors="*{status}"></small>
 				</div>
-				<input value="Thêm sản phẩm" class="btn btn-primary" type="submit">
+				<input th:value="${bean.id != null && bean.id.isPresent() ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}" class="btn btn-primary" type="submit">
 				<br/>
 				<small class="text-danger" th:text="${productError}"></small>
     		</form>

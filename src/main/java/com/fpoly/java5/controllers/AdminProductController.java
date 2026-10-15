@@ -2,6 +2,7 @@ package com.fpoly.java5.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,35 @@ public class AdminProductController {
 	private ProductJPA productJPA;
 
 	@GetMapping("/admin/product-form")
-	public String productFormUI(Model model) {
+	public String productFormUI(Model model,
+			@RequestParam(name = "id") Optional<String> idOptional) {
+		if(idOptional.isPresent()) {
+			try {
+				Optional<ProductEntity> prodOptional = productJPA
+						.findById(Integer.parseInt(idOptional.get()));
+				
+				if(prodOptional.isPresent()) {
+					ProductEntity productEntity = prodOptional.get();
+					
+					ProductFormBean bean = new ProductFormBean();
+					bean.setName(productEntity.getName());
+					bean.setDesc(productEntity.getDesc());
+					bean.setPrice(productEntity.getPrice());
+					bean.setQuantity(productEntity.getQuantity());
+					bean.setCategory(productEntity.getCategoryEntity().getId());
+					bean.setStatus(productEntity.isActive() ? 2 : 1);
+					
+					Optional<Integer> idBeanOptional = Optional.of(Integer.parseInt(idOptional.get()));
+					bean.setId(idBeanOptional);
+					
+					model.addAttribute("bean", bean);
+					
+					return "product-form.html";
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		
 		model.addAttribute("bean", new ProductFormBean());
 		
@@ -52,7 +81,9 @@ public class AdminProductController {
 			Errors errors) {
 		if(!errors.hasErrors() && bean.getImageError().equals("")) {
 			try {
-				productServices.addProduct(bean);
+				productServices.saveProduct(bean);
+				
+				return "redirect:/admin/products";
 			} catch (Exception e) {
 				model.addAttribute("productError", e.getMessage());
 			}
