@@ -1,10 +1,15 @@
 package com.fpoly.java5.components;
 
+import java.util.Optional;
+
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fpoly.java5.entities.UserEntity;
+import com.fpoly.java5.jpas.UserJPA;
 import com.fpoly.java5.utils.Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +17,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class AuthInterceptor implements HandlerInterceptor{
+	
+	@Autowired
+	private UserJPA userJPA;
 	
 //	Hàm này sẽ được kích hoạt sau khi user gửi request và trước khi controller thực thi
 	@Override
@@ -32,6 +40,18 @@ public class AuthInterceptor implements HandlerInterceptor{
 		try {
 			int userId = Integer.parseInt(Utils.getCookieByName("USER_ID", request));
 			int role = Integer.parseInt(Utils.getCookieByName("ROLE", request));
+			
+//			Lấy dữ liệu trong db => Ktra có tồn tại
+			
+			Optional<UserEntity> userOptional = userJPA.findById(userId);
+			
+			if(!userOptional.isPresent()) {
+				throw new RuntimeException();
+			}
+			
+			if(!userOptional.get().isActive()) {
+				throw new RuntimeException();
+			}
 			
 //			/product
 //			/admin/product-form
