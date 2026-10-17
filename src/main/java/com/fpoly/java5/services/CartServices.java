@@ -113,4 +113,46 @@ public class CartServices {
 //		Khi thêm sản phẩm vào giỏ hàng có cần trừ số lượng
 //		ở sản phẩm trong kho không? => Không trừ trong kho 
 	}
+	
+//	Tăng số lượng sản phẩm ở giỏ hàng 
+	
+	public void increaseCartItem(int cartItemId) {
+//		Lấy user id từ cookie
+		int userId = Integer.parseInt(Utils.getCookieByName("USER_ID", request));
+//		Lấy thông tin user từ database bằng user id lấy được ở cookie
+		Optional<UserEntity> userOptional = userJPA.findById(userId);
+		
+//		Để thực hiện được chức năng tăng sản phẩm này thì user chắc chắn có giỏ hàng
+		
+//		Chắc chắn có giá trị (Không thể null)
+		CartEntity cartEntity = userOptional.get().getCartEntity();
+		
+//		Lấy thông tin của cart item từ id
+//		=> So sánh id giỏ hàng của cart item và id giỏ hàng của user
+//		=> Nếu trùng khớp => Cho tăng số lượng
+//		=> Nếu không trùng => Báo "Sản phẩm trong giỏ hàng không thuộc sở hữu của user hiện tại"
+		
+//		Lấy thông tin của cartItem từ id
+		Optional<CartItemEntity> cartItemOptional = cartItemJPA.findById(cartItemId);
+		
+//		Cart  Item không tồn tại 
+		if(!cartItemOptional.isPresent()) {
+			throw new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng!");
+		}
+		
+		CartItemEntity cartItemEntity = cartItemOptional.get();
+		
+//		Cart Item không thuộc quyền sở hữu của user đang đăng nhập
+		if(cartItemEntity.getCartEntity().getId() != cartEntity.getId()) {
+			throw new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng!");
+		}
+		
+//		Kiểm tra số lượng sản phẩm trong kho còn khả dụng không?
+		if(cartItemEntity.getQuantity() + 1 > cartItemEntity.getProductEntity().getQuantity()) {
+			throw new RuntimeException("Sản phẩm không đủ số lượng");
+		}
+		
+		cartItemEntity.setQuantity(cartItemEntity.getQuantity() + 1);
+		cartItemJPA.save(cartItemEntity);
+	}
 }
