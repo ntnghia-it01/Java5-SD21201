@@ -35,7 +35,7 @@ public class CartServices {
 	@Autowired
 	private CartItemJPA cartItemJPA;
 	
-//	Dùng GET với url /user/add-to-cart 
+//	Dùng POST với url /user/add-to-cart 
 	public void addToCart(int prodId) {
 //		Kiểm tra user có giỏ hàng chưa?
 //		- Nếu chưa có thì thực hiện tạo giỏ hàng
@@ -179,5 +179,26 @@ public class CartServices {
 			cartItemEntity.setQuantity(cartItemEntity.getQuantity() - 1);
 			cartItemJPA.save(cartItemEntity);
 		}
+	}
+	
+//	Xoá sản phẩm trong giỏ hàng 
+	public void removeCartItem(int cartItemId) {
+		int userId = Integer.parseInt(Utils.getCookieByName("USER_ID", request));
+		Optional<UserEntity> userOptional = userJPA.findById(userId);
+		CartEntity cartEntity = userOptional.get().getCartEntity();
+
+		Optional<CartItemEntity> cartItemOptional = cartItemJPA.findById(cartItemId);
+		
+		if(!cartItemOptional.isPresent()) {
+			throw new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng!");
+		}
+		
+		CartItemEntity cartItemEntity = cartItemOptional.get();
+		
+		if(cartItemEntity.getCartEntity().getId() != cartEntity.getId()) {
+			throw new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng!");
+		}
+		
+		cartItemJPA.deleteById(cartItemId);
 	}
 }
