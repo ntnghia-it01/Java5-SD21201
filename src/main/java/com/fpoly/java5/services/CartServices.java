@@ -115,7 +115,6 @@ public class CartServices {
 	}
 	
 //	Tăng số lượng sản phẩm ở giỏ hàng 
-	
 	public void increaseCartItem(int cartItemId) {
 //		Lấy user id từ cookie
 		int userId = Integer.parseInt(Utils.getCookieByName("USER_ID", request));
@@ -154,5 +153,31 @@ public class CartServices {
 		
 		cartItemEntity.setQuantity(cartItemEntity.getQuantity() + 1);
 		cartItemJPA.save(cartItemEntity);
+	}
+	
+//	Giảm số lượng sản phẩm ở giỏ hàng
+	public void decreaseCartItem(int cartItemId) {
+		int userId = Integer.parseInt(Utils.getCookieByName("USER_ID", request));
+		Optional<UserEntity> userOptional = userJPA.findById(userId);
+		CartEntity cartEntity = userOptional.get().getCartEntity();
+
+		Optional<CartItemEntity> cartItemOptional = cartItemJPA.findById(cartItemId);
+		
+		if(!cartItemOptional.isPresent()) {
+			throw new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng!");
+		}
+		
+		CartItemEntity cartItemEntity = cartItemOptional.get();
+		
+		if(cartItemEntity.getCartEntity().getId() != cartEntity.getId()) {
+			throw new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng!");
+		}
+		 
+		if(cartItemEntity.getQuantity() - 1 == 0) {
+			cartItemJPA.deleteById(cartItemId);
+		}else {
+			cartItemEntity.setQuantity(cartItemEntity.getQuantity() - 1);
+			cartItemJPA.save(cartItemEntity);
+		}
 	}
 }
