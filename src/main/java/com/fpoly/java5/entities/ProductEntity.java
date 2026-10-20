@@ -1,5 +1,7 @@
 package com.fpoly.java5.entities;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,5 +47,9 @@ public class ProductEntity {
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private CategoryEntity categoryEntity;
+	
+	@OneToMany(mappedBy = "productEntity")
+	private List<OrderItemEntity> orderItemEntities;
+//	Dùng để thống kê
 }
 

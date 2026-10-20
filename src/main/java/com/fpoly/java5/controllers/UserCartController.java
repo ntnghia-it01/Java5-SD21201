@@ -93,7 +93,7 @@ public class UserCartController {
 			@RequestParam(name = "id") int cartItemId) {
 		try {
 			cartServices.removeCartItem(cartItemId);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("errorCart", e.getMessage());
 		}
